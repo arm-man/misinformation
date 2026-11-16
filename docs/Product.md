@@ -24,7 +24,7 @@ These values should be defined in globals.css.
 
 - **Student**: the person using Misinformation Examination.
 - **Guest**: a Student without an email address.
-- **Key**: a 24-character key using randomBytes(12).toString("hex") that is assumed to be unique.
+- **Key**: a 16-character key using randomBytes(8).toString("hex") that is assumed to be unique.
 - **Question**: a prompt presented to the Student.
 - **Answer**: the correct answer to the Question.
 - **Choices**: the multiple options available for the Student to select as their Guess, inlcuding "I don't know / Skip".
@@ -41,11 +41,12 @@ These values should be defined in globals.css.
 - When the Submit button is clicked or the Enter button is pressed:
   - If there is no browser cookie, create a new Student in the student table with a Key and save the Key in the cookie and in the student table.
   - Add the email address to the Student in the database.
-  - Show a message that the email has been saved and that they will be notified when new Questions are available.
+  - Show a message that the email has been saved and that they will be notified when new Subjects are available.
   - Record the event in the log table.
 
 ## Cookie
-- Store the Key in a browser cookie to link the Guest/Student to the Session entry in the database.
+- Store the Key in a browser cookie to link the browser's session to a Student.
+- On insertion of the Key to the server/database, if a Key collision occurs, the application will generate a replacement key and retry the insertion.
 - The cookie shall have an expiration of 365 days.
 
 ## Wordmark
@@ -58,21 +59,20 @@ These values should be defined in globals.css.
 - A brief explanation of the website's purpose and the examination.
 - A highlighted section to start a Session:
   - Show the different Subjects - a visual identifier will differentiate between completed Subjects, Subjects already in progress, and Subject that have not been started.
+    - A Subject with no Questions associated with it will be omitted.
   - When a Subject is clicked:
     - If there is no browser cookie, create a new Student in the student table with a Key and save the Key in the cookie.
     - Either start a new Session, resume the Session, or redirect the Student to the Session Complete page.
 - A section to enter an email address if there is no browser cookie or the Key is associated with a Guest.
 - A longer explanation about why the page exists, the goals of Misinformation Examination, and the difficulty about truth.
 
-## Sessions
-
-- A Session contains the questions assigned when it starts. Later additions to a Subject do not change an existing Session.
-
 ## Session Examination
 
+- The requesting Student must own the Session.
 - A Question is associated with one Subject.
 - A Session is associated with one Student and one Subject.
-- When starting a Session, add a new entry to the session database table using the unique Key and add all of the Session's questions in random order to the session_questions table.
+- When starting a Session, add a new entry to the session database table and add all of the Session's questions in random order to the session_questions table.
+- A Session contains the questions assigned when it starts. Later additions to a Subject do not change an existing Session.
 - The Session page will have the following content:
   - A section showing info about the Session:
     - The Subject.
@@ -83,7 +83,8 @@ These values should be defined in globals.css.
     - A section for the Q&A:
       - The Question.
       - An area to display the Choices, where only one Choice may be selected as the Guess.
-      - One of the choices should be **I don't know / Skip**, unless instructions explicitly say to omit the choice, which should be slightly offset from the other Choices.
+      - One of the choices should be **I don't know / Skip**, unless instructions explicitly say to omit the choice.
+	    - the **I don't know / Skip** choice should be slightly offset from the other Choices to note that it is special.
     - A **Previous** button, left justified, will display the previous Question along with the Student's Guess highlighted.
     - A **Finish Examination** button, center justified, is shown when every Question in the Session has a recorded Guess.
     - A **Next** button, right justified, is shown only if the Question has a Guess. The button is never displayed on the last Question.
@@ -91,9 +92,12 @@ These values should be defined in globals.css.
 - Upon starting a Session, a new Question is selected.
 - Question order was predetermined at the start of the Session.
 - When the Student selects or updates a Choice, record the result in the database, and then proceed to the next Question (auto-advance) unless it is the last Question.
-- When the Student clicks **Finish Examination**, add timestamp to the completed_at field of the session table and redirect the Student to the Session Complete page.
+- When the Student clicks **Finish Examination**, verify that every session_questions has a non-NULL Choice, add the timestamp to the completed_at field of the session table, and redirect the Student to the Session Complete page.
 - On a page refresh/reload, set the Question to the first Question without a Guess or show the last Question.
 - For errors returned by the server, show a short error message, preserve the selection, and do not auto-advance.
+- Choice 0 is allowed only when the Question is skippable.
+- Guesses can be changed only while the Session is active.
+- A Student can only have one Session for a Subject, whether that Session is active or complete. A Student cannot retake the Questions for a Subject.
 
 ## Session Complete
 
@@ -147,6 +151,10 @@ The Feedback page will have the following content:
 ## Log and Feedback Notification
 
 - Whenever an entry is added to the log, question_feedback, or general_feedback tables, an email is sent to LOG_EMAIL_TO with details of the event.
+
+## Administration Edits
+
+Once a Question has been included in a Session, the administrator shall not substantively alter the Question, Choice order, or Answer. To make a substantive correction, the administrator will deactivate the old Question and create a replacement Question. Existing Sessions continue referencing the original Question. These alterations will be enforced by the Adminstator, not by Product restrictions.
 
 ## Mobile Requirements
 
