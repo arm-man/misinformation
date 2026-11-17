@@ -151,6 +151,7 @@ The Feedback page will have the following content:
 ## Log and Feedback Notification
 
 - Whenever an entry is added to the log, question_feedback, or general_feedback tables, an email is sent to LOG_EMAIL_TO with details of the event.
+- All logging is best effort: a problem with adding a log message must not prevent the code from continuing as expected.
 
 ## Administration Edits
 
