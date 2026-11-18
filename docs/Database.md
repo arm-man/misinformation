@@ -92,7 +92,9 @@ Constraints:
 - Optional choices must be NULL or nonempty after trimming.
 - choice4 requires a choice3
 
-`is_active` is a global Question flag managed directly through SQL. Inactive Questions remain in the database and are excluded only when selecting Questions for a new Session. Existing `session_questions` membership is fixed and remains usable if a Question is later deactivated; retrieval, Guess evaluation, skipping, progress, and completion for those Sessions do not filter on `questions.is_active`.
+`is_active` is a global Question flag editable in the Administration area. Inactive Questions remain in the database and appear in Administration, but are excluded when selecting Questions for a new Session. Existing `session_questions` membership is fixed and remains usable if a Question is later deactivated; retrieval, Guess evaluation, skipping, progress, and completion for those Sessions do not filter on `questions.is_active`.
+
+The Administration area lists a Subject's Questions in ascending `id` order. New Questions receive an application-supplied `subject_id` from the selected Subject and a database-generated `id`. The new-Question form starts with `is_active = true`, matching the database default. It creates no row until all required fields and choice/answer constraints above are satisfied. Empty optional choices are stored as `NULL`.
 
 ### `sessions`
 
@@ -201,7 +203,7 @@ Review actual queries with EXPLAIN if performance becomes a problem.
 
 ## Deletion and Update Rules
 
-The product relies on the Administrator's operational promise not to substantively update content: once a Question has been included in any Session, the administrator will not substantively change its prompt, Choices, correct Answer, or Subject. To replace it, deactivate the original Question and create a new Question. Existing Sessions retain the original Question.
+The product relies on the Administrator's operational promise not to substantively update a Question once a Session containing it has been completed. The administrator will not substantively change its prompt, Choice order, or correct Answer at that point. To make a substantive correction, deactivate the original Question and create a new Question. Existing Sessions retain the original Question. This promise is not enforced by a database constraint or an Administration UI restriction.
 
 All foreign keys use ON DELETE RESTRICT and the default ON UPDATE NO ACTION. No cascading deletion or update is configured.
 

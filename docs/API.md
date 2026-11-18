@@ -279,6 +279,28 @@ Expected errors:
 | `400`  | `INVALID_QUESTION_ID`       | `questionId` is not a valid integer.    |
 | `404`  | `QUESTION_NOT_FOUND`        | The Question does not exist.            |
 
+## Administration Endpoints
+
+These endpoints use the separate Administration cookie described in `Architecture.md`. The current-Student cookie grants no access. All Administration endpoints except sign-in return `401` with `ADMIN_AUTH_REQUIRED` when the Administration cookie is missing, invalid, or expired. Do not include secrets in responses or logs.
+
+### Sign in and out
+
+`POST /api/admin/login` accepts `{ "password": "..." }`. Verify the password on the server, set the Administration cookie, and return `200` with no body. Return `401` with `INVALID_ADMIN_PASSWORD` for a wrong password. `POST /api/admin/logout` clears the cookie and returns `200` with no body.
+
+### Load Subjects and Questions
+
+The protected Administration page initially loads the Subject list without selecting a Subject or loading a Question form. The list includes Subjects without Questions. After selection, load the Subject's Questions with a server-side data function, including inactive Questions and ordering them by ascending `id`; display the last Question in that order, or a blank new-Question form if the list is empty. If the selector fetches a different Subject without a full page load, use `GET /api/admin/subjects/{subjectId}/questions` with the same authorization check. Return the Subject's Questions with every `questions` column, or an empty array; return `404` with `SUBJECT_NOT_FOUND` if the Subject does not exist.
+
+### Create a Question
+
+`POST /api/admin/subjects/{subjectId}/questions` accepts `short_title`, `question_text`, `choice1`, `choice2`, optional `choice3` and `choice4`, `answer`, `explanation`, `why_it_spreads`, `sources`, and `is_active`. The new-Question form initializes `is_active` to `true`; the request sends its current boolean value, including when the Administrator unchecks it. The Subject comes only from the URL; the server generates `id`. Validate the required content and database constraints in `Database.md` before insertion. Return `201` with the created Question, including its generated `id` and `subject_id`. Return `400` with `INVALID_QUESTION` for incomplete or invalid data, or `404` with `SUBJECT_NOT_FOUND` for an unknown Subject.
+
+### Update a Question
+
+`PUT /api/admin/questions/{questionId}` accepts the same editable fields as creation. Ignore no unexpected fields: reject attempts to change `id` or `subject_id` with `400` and `INVALID_QUESTION`. Validate the full Question before updating it. Return `200` with the updated Question, or `404` with `QUESTION_NOT_FOUND` if absent. `is_active` can be changed here. The administrator follows the operational promise in `Product.md` for Questions included in completed Sessions.
+
+The browser calls a create or update endpoint only when the Administrator selects **Save**. **Next**, **Previous**, and Subject selection perform no mutation and are disabled while edits are unsaved. After a successful create or update, display the returned saved Question and allow navigation. For failed validation or storage, keep the draft visible and navigation disabled. **Cancel** discards local edits without an API call. Existing error shape and server-side logging rules apply.
+
 ## Server-Rendered Page Data
 
 The following data is expected to be loaded by Server Components through server-side functions rather than by calling the application's own API:

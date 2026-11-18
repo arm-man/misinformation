@@ -194,6 +194,7 @@ Keep rules that do not require database access as ordinary TypeScript functions 
 The application stores the Key in a browser cookie so the user can revisit Sessions that they have started or completed.
 The current-Student cookie should be set by the server and use `HttpOnly` (Client-side JavaScript cannot delete the cookie), `SameSite=Lax`, and `Secure` in production. It must not be treated as proof of authenticated identity.
 Do not introduce an authentication framework. Authentication can be redesigned if login, passwords or stronger identity verification are added in a future release.
+This Student cookie is unrelated to Administration access and must never authorize Administration requests.
 - Resolve the current Student using the browser cookie.
 - Loading a page does not create a Student, set a cookie, or create a Session. Those operations occur through the mutation endpoints.
 - Before returning Student-owned data, verify that the Session belongs to the current Student.
@@ -204,6 +205,14 @@ Do not introduce an authentication framework. Authentication can be redesigned i
 
 - Load the available Subjects and the current Student's Session status for each Subject.
 - Without a valid Student cookie, show all Subjects as not started.
+
+### Administration Access
+
+- Keep the Administration UI and its Route Handlers in the existing Next.js application. Require the Administration password before returning Administration data or accepting Question mutations; protect each server request, not only the browser page.
+- Read the password from a server-only `ADMIN_PASSWORD` environment variable. Store it in `.env.development.local` for development and in Vercel environment variables for production, following the database credential pattern below. Never commit it, send it to the browser, or write it to logs.
+- Verify submitted passwords on the server. After successful verification, issue a separate, signed, `HttpOnly`, `SameSite=Lax` Administration cookie with `Secure` in production and a bounded expiration. Keep the signing secret in a separate server-only `ADMIN_SESSION_SECRET` environment variable stored the same way. Reject invalid or expired cookies. Logging out clears the cookie.
+- An Administration cookie must not grant access to Student-owned Sessions. Protect Administration read paths and mutation endpoints independently of the Student cookie.
+- Initially leave the Subject unselected; load its Question form only after the Administrator chooses a Subject. Retrieve all Questions for the selected Subject in ascending `questions.id`, including inactive Questions, and initially display the last saved Question. Show a blank new-Question form if none exist. The Subject selection and current draft are temporary browser state. Initialize a new Question's `is_active` value to `true`. Disable Question navigation and Subject switching while the draft has unsaved edits. Save explicitly through a Route Handler before allowing navigation again; Next and Previous perform no mutation. Use Route Handlers for password verification, logout, and Question creation or updates.
 
 ### Session Page
 
@@ -256,12 +265,14 @@ Do not introduce a separate validation framework unless native TypeScript/applic
 
 ## Secrets and Configuration
 
-The application requires at least a PostgreSQL connection string.
-Database credentials must not be committed to Git.
+The application requires at least a PostgreSQL connection string. Administration also requires `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET`.
+Database credentials and Administration secrets must not be committed to Git.
 
 Use:
 - `.env.development.local` for the development database connection.
 - Vercel environment variables for the production database connection.
+
+Store the Administration secrets in those same environment-specific locations. Use different values for development and production. Vercel preview deployments must not receive production Administration secrets.
 
 The Resend log-email integration uses `RESEND_API_KEY` and `LOG_EMAIL_TO` as server-only Vercel environment variables.
 Vercel preview deployments must not receive the production database connection string. Initially, previews may use the development database or have no database configured.

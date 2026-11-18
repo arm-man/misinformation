@@ -153,9 +153,22 @@ The Feedback page will have the following content:
 - Whenever an entry is added to the log, question_feedback, or general_feedback tables, an email is sent to LOG_EMAIL_TO with details of the event.
 - All logging is best effort: a problem with adding a log message must not prevent the code from continuing as expected.
 
-## Administration Edits
+## Administration Area
 
-Once a Question has been included in a Session, the administrator shall not substantively alter the Question, Choice order, or Answer. To make a substantive correction, the administrator will deactivate the old Question and create a replacement Question. Existing Sessions continue referencing the original Question. These alterations will be enforced by the Adminstator, not by Product restrictions.
+- Provide a password-protected Administration area within the existing website for adding and editing Questions. Use the website's color palette defined above.
+- Show a Subject selector containing all Subjects, including Subjects without Questions. On opening Administration, leave the Subject unselected and show no Question form until the Administrator selects one. Selecting a Subject with saved Questions shows its last Question in ascending `questions.id` order. Show every `questions` field; `id` and `subject_id` are read-only, and every other field is editable. The selected Subject determines `subject_id` for a new Question. Provide a control for `is_active`.
+- Navigate Questions in a stable order by ascending `questions.id`, including inactive Questions. **Previous** is disabled on the first saved Question or if no saved Questions exist. **Next** on the last saved Question opens a blank new-Question form. If a Subject has no Questions, show the blank new-Question form immediately.
+- Unsaved edits exist when any editable field differs from its loaded value. While edits are unsaved, disable **Next**, **Previous**, and the Subject selector, and enable **Save** and **Cancel**. The Administrator must Save or Cancel before navigating to another Question or Subject. After a successful Save or Cancel, re-enable navigation according to the current position. If validation or saving fails, keep the draft visible, show a useful error, and leave navigation disabled.
+- On a blank new-Question form, default `is_active` to checked (`true`). **Next** is always disabled. With no unsaved edits, **Previous** returns to the last saved Question; it is disabled if none exists.
+- **Save**, whether editing an existing Question or adding a new Question, requires that a Question have nonblank `short_title`, `question_text`, `choice1`, `choice2`, `explanation`, `why_it_spreads`, and `sources`, a valid `answer` referring to a populated Choice, and a value for `is_active`. `choice3` and `choice4` are optional, but `choice4` requires `choice3`. Blank optional choices are stored as `NULL`.
+- A successful **Save** on a blank form creates a Question in the database. The saved Question becomes the last Question and remains displayed as an existing Question.
+- **Cancel** on a blank form discards the draft, clears the entered fields, restores `is_active` to checked, and stays on the blank form. It does not create a Question.
+- A successful **Save** on an existing Question updates it.
+- **Cancel** for an existing Question discards unsaved edits, restores the last saved values, and stays on that Question.
+
+## Administrator Promise
+
+Once a Session containing a Question has been completed, the administrator promises not to substantively alter that Question, its Choice order, or its Answer. To make a substantive correction, the administrator will deactivate the original Question and create a replacement Question. Existing Sessions continue referencing the original Question. This is an operational promise, not a restriction enforced by the Administration area.
 
 ## Mobile Requirements
 
