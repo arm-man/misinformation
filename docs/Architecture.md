@@ -208,6 +208,7 @@ This Student cookie is unrelated to Administration access and must never authori
 
 ### Administration Access
 
+- Open the Administration page at `/admin`. It renders the sign-in form until a valid Administration cookie is present.
 - Keep the Administration UI and its Route Handlers in the existing Next.js application. Require the Administration password before returning Administration data or accepting Question mutations; protect each server request, not only the browser page.
 - Read the password from a server-only `ADMIN_PASSWORD` environment variable. Store it in `.env.development.local` for development and in Vercel environment variables for production, following the database credential pattern below. Never commit it, send it to the browser, or write it to logs.
 - Verify submitted passwords on the server. After successful verification, issue a separate, signed, `HttpOnly`, `SameSite=Lax` Administration cookie with `Secure` in production and a bounded expiration. Keep the signing secret in a separate server-only `ADMIN_SESSION_SECRET` environment variable stored the same way. Reject invalid or expired cookies. Logging out clears the cookie.

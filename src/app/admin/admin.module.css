@@ -1,0 +1,110 @@
+.shell {
+  min-height: 100vh;
+  padding: clamp(20px, 5vw, 64px);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.panel {
+  width: min(100%, 960px);
+  margin: 0 auto;
+  padding: clamp(20px, 4vw, 44px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 12px 36px #2f31330d;
+}
+
+.login {
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: min(12vh, 100px);
+}
+
+.eyebrow {
+  color: var(--accent-brown);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.muted { color: var(--muted-text); }
+.error { color: var(--error); margin: 16px 0; }
+
+.panel h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; margin: 8px 0; }
+.panel h2 { font-size: 1.4rem; margin: 5px 0 0; }
+
+.header, .sectionHeading, .actions, .navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header { padding-bottom: 26px; border-bottom: 1px solid var(--border); }
+.sectionHeading { margin: 34px 0 22px; }
+
+.badge {
+  flex: none;
+  padding: 7px 11px;
+  border-radius: 100px;
+  color: var(--accent-brown);
+  background: var(--soft-accent);
+  font-size: 0.84rem;
+}
+
+.subjectRow { display: grid; gap: 8px; margin-top: 26px; max-width: 480px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.wide { grid-column: 1 / -1; }
+.panel label { font-weight: 650; font-size: 0.93rem; }
+
+.panel input:not([type="checkbox"]), .panel select, .panel textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--foreground);
+  font: inherit;
+}
+
+.panel textarea { resize: vertical; line-height: 1.5; }
+.panel input[readonly] { background: var(--soft-accent); color: var(--muted-text); }
+.panel :is(input, select, textarea, button):focus-visible { outline: 3px solid var(--selection); outline-offset: 2px; }
+.panel :is(input, select, textarea):focus-visible { border-color: var(--primary-blue); }
+
+.checkboxRow { display: flex; align-items: center; gap: 10px; }
+.checkboxRow input { width: 20px; height: 20px; accent-color: var(--primary-blue); }
+
+.panel button {
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 1px solid var(--primary-blue);
+  border-radius: 8px;
+  color: white;
+  background: var(--primary-blue);
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.panel button:hover:not(:disabled) { background: var(--primary-hover); }
+.panel button.secondary { color: var(--primary-blue); background: transparent; }
+.panel button.secondary:hover:not(:disabled) { background: var(--selection); }
+.panel button:disabled { opacity: 0.48; cursor: not-allowed; }
+.actions { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+
+@media (max-width: 640px) {
+  .header { align-items: flex-start; }
+  .grid { grid-template-columns: 1fr; }
+  .wide { grid-column: auto; }
+  .actions { align-items: stretch; flex-direction: column; }
+  .navigation { width: 100%; }
+  .navigation button { flex: 1; }
+  .sectionHeading { align-items: flex-start; }
+}
