@@ -108,3 +108,15 @@
   .navigation button { flex: 1; }
   .sectionHeading { align-items: flex-start; }
 }
+
+@media (min-width: 641px) {
+  .shell { padding-top: 28px; padding-bottom: 28px; }
+  .panel { padding-top: 26px; padding-bottom: 26px; }
+  .login { margin-top: min(6vh, 48px); gap: 10px; }
+  .header { padding-bottom: 16px; }
+  .sectionHeading { margin-top: 22px; margin-bottom: 16px; }
+  .subjectRow { margin-top: 18px; }
+  .grid { gap: 14px 20px; }
+  .field { gap: 6px; }
+  .actions { margin-top: 22px; padding-top: 16px; }
+}

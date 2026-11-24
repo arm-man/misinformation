@@ -64,6 +64,8 @@ These values should be defined in globals.css.
     - If there is no browser cookie, create a new Student in the student table with a Key and save the Key in the cookie.
     - Either start a new Session, resume the Session, or redirect the Student to the Session Complete page.
 - A section to enter an email address if there is no browser cookie or the Key is associated with a Guest.
+  - When a valid email address is submitted, associate the email address with the Guest or create a new Student with the associated email address.
+- Below the email section, show a share prompt and a button that copies the public Landing Page URL. Briefly show "Link copied!" beside the button after copying.
 - A longer explanation about why the page exists, the goals of Misinformation Examination, and the difficulty about truth.
 
 ## Session Examination
@@ -76,8 +78,8 @@ These values should be defined in globals.css.
 - The Session page will have the following content:
   - A section showing info about the Session:
     - The Subject.
-    - The Session progress, `17 of 20 answered · 5 skipped`.
-      - The first number is the number of Questions in the Session that have a Guess.
+    - The Session progress, `15 of 20 answered · 5 skipped`.
+      - The first number is the number of Questions answered with a non-Skip Choice. Skips are shown only in the last number.
       - The second number is the total number of Questions in the Session.
       - The last number is the number of Questions that were Skipped.
     - A section for the Q&A:
@@ -91,7 +93,8 @@ These values should be defined in globals.css.
 
 - Upon starting a Session, a new Question is selected.
 - Question order was predetermined at the start of the Session.
-- When the Student selects or updates a Choice, record the result in the database, and then proceed to the next Question (auto-advance) unless it is the last Question.
+- When the Student selects a Choice for the first time, record the result in the database, then proceed to the next Question (auto-advance) unless it is the last Question.
+- When the Student updates a saved Choice, record the result in the database and stay on the current Question.
 - When the Student clicks **Finish Examination**, verify that every session_questions has a non-NULL Choice, add the timestamp to the completed_at field of the session table, and redirect the Student to the Session Complete page.
 - On a page refresh/reload, set the Question to the first Question without a Guess or show the last Question.
 - For errors returned by the server, show a short error message, preserve the selection, and do not auto-advance.
@@ -124,6 +127,7 @@ The Question page will have the following content:
 - Question, Answer, and Guess.
 - A pane titled "Ask AI about this question" with buttons for ChatGPT, Gemini, Claude, Grok, and Perplexity.
   - Clicking one of the buttons redirects to the associated website and pre-populates the question.
+  - If a provider has no confirmed prompt-prefill link, copy the Question, open that provider, and display a "Question copied" message.
   - Have a button to copy the Question for AI websites that do not allow pre-populating the question.
 - A pane providing an explanation of the Answer.
 - A pane titled "Why this misconception spreads" with a paragraph about why people may have been misled.
@@ -137,6 +141,8 @@ The Question page will have the following content:
     - Display a note saying thank you for the feedback.
  
 ## Feedback Page
+
+If feedback is submitted without a Student cookie, create a Guest and set the Student cookie.
 
 The Feedback page will have the following content:
 - A section to enter an email address if the Key is associated with a Guest.

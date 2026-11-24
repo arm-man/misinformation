@@ -233,7 +233,7 @@ This Student cookie is unrelated to Administration access and must never authori
 ### Client Behavior After Mutations
 
 - After starting or resuming a Session, navigate to /sessions/{sessionId}.
-- After saving a Guess, update local state and auto-advance only after the server confirms success. Previous and Next operate locally.
+- After saving a first Guess, update local state and auto-advance only after the server confirms success. After updating a saved Guess, stay on the current Question. Previous and Next operate locally.
 - If saving fails, preserve the selection, show an error, and do not auto-advance.
 - After completing a Session, call router.refresh() so the same URL displays completed results.
 - After saving an email, refresh server-rendered Student information so the email-entry sections disappear.

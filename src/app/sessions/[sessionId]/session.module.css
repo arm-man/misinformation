@@ -1,0 +1,24 @@
+.progress { color: var(--muted-text); font-weight: 700; margin: 12px 0; }
+.progressTrack { height: 8px; border-radius: 20px; background: var(--soft-accent); max-width: 660px; overflow: hidden; }
+.progressTrack div { height: 100%; background: var(--primary-blue); transition: width .2s; }
+.questionCard { margin: 35px 0 26px; background: var(--surface); border: 1px solid var(--border); padding: 35px; border-radius: 6px; }
+.questionText { font: 400 clamp(1.55rem, 3vw, 2.25rem)/1.35 Georgia, serif; margin: 15px 0 30px; }
+.choices { border: 0; margin: 0; padding: 0; display: grid; gap: 11px; }
+.choice { min-height: 56px; display: flex; align-items: center; gap: 14px; background: var(--background); border: 1px solid var(--border); border-radius: 4px; padding: 14px 18px; cursor: pointer; line-height: 1.5; }
+.choice input { width: 19px; height: 19px; flex: none; accent-color: var(--primary-blue); }
+.choiceSelected { background: var(--selection); border-color: var(--primary-blue); }
+.skipChoice { margin-top: 12px; color: var(--muted-text); }
+.navigation { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; align-items: center; }
+.navigation > div:nth-child(2) { text-align: center; }
+.navigation > div:nth-child(3) { text-align: right; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media(max-width:600px) { .questionCard { padding: 22px; } .navigation { grid-template-columns: 1fr 1fr; } .navigation > div:nth-child(2) { grid-column: 1 / -1; grid-row: 1; } }
+
+@media (min-width: 601px) {
+  .progress { margin-top: 8px; margin-bottom: 8px; }
+  .questionCard { margin-top: 20px; margin-bottom: 18px; padding: 26px; }
+  .questionText { margin-top: 10px; margin-bottom: 20px; }
+  .choices { gap: 8px; }
+  .choice { min-height: 48px; padding-top: 10px; padding-bottom: 10px; }
+  .skipChoice { margin-top: 8px; }
+}

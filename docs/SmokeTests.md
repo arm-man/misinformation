@@ -2,7 +2,7 @@
 
 **Start as a Guest.** In a fresh browser profile, open the landing page and select a Subject. Verify that the examination opens at zero progress, a returning-visitor cookie is set, and you can start without entering an email or signing in.
 
-**Answer, skip, and resume.** Choose an answer and skip another Question. Verify that each submission advances to the next Question and that progress reflects the skip. Use **Previous** to see a saved Guess highlighted, then refresh to verify that the first unanswered Question opens with progress intact. Return to the landing page via the wordmark, verify the Subject is marked in progress, and select it to resume the same Session.
+**Answer, skip, update, and resume.** Choose an answer and skip another Question. Verify that each first submission advances to the next Question and that progress reflects the skip. Use **Previous** to see a saved Guess highlighted, change it, and verify the save leaves that Question displayed. Use **Next** to continue, then refresh to verify that the first unanswered Question opens with progress intact. Return to the landing page via the wordmark, verify the Subject is marked in progress, and select it to resume the same Session.
 
 **Finish and check results.** Use at least one correct Guess, one incorrect Guess, and one skip. Verify that correct Answers stay hidden during the examination and **Finish Examination** appears once every Question has a recorded response. Finish and check the Subject, completion date, and correct, incorrect, and skipped totals. Verify the results follow the examination order and that selecting the now-completed Subject on the landing page reopens those results.
 
@@ -10,9 +10,13 @@
 
 **Submit general feedback as a Guest.** Follow the feedback link from results. With no email saved, verify Enter inserts a newline and **Submit Anonymously** shows a thank-you message.
 
+**Open feedback directly.** In a fresh browser profile, open `/feedback` and submit valid feedback. Verify a Guest cookie is set, the thank-you message appears, and fewer than five non-whitespace characters cannot be submitted.
+
 **Save an email from results.** As a Guest, verify invalid input leaves **Submit** disabled. Save a valid test email, check the confirmation, and reload in the same browser. Verify the results are still available and the Guest email form no longer appears.
 
 **Check event notifications.** In an environment with `LOG_EMAIL_TO` configured, verify the test inbox receives event details for examination completion, email save, question feedback, and general feedback.
+
+**Open AI providers.** From a completed Question page, verify ChatGPT opens with the Question in its prompt. Verify Gemini, Claude, Grok, and Perplexity open and the Question is copied with a confirmation message.
 
 **Check the mobile layout.** At phone width, verify that you can select a Subject, answer a Question, and tap a Question in results. If the results table overflows, verify it scrolls horizontally and all columns remain accessible.
 

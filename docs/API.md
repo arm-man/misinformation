@@ -158,7 +158,7 @@ Request:
 Server behavior:
 
 1. Using PUT makes retrying the same selection safe.
-2. The browser should auto-advance only after saving succeeds.
+2. The browser should auto-advance after a first Guess only when saving succeeds. Updating a saved Guess leaves the current Question displayed.
 
 Success response — `200 OK`:
 
@@ -171,9 +171,10 @@ Expected errors:
 | `400`  | `INVALID_CHOICE`            | `choice` is not a valid integer.        |
 | `403`  | `SESSION_FORBIDDEN`         | The Session belongs to another Student. |
 | `404`  | `SESSION_NOT_FOUND`         | The Session does not exist.             |
-| `404`  | `QUESTION_NOT_FOUND`        | The Question does not exist.            |
+| `404`  | `QUESTION_NOT_FOUND`        | The Question does not exist in the Session. |
 | `404`  | `CHOICE_OUT_OF_BOUNDS`      | Choice is not valid for this Question.  |
 | `409`  | `SESSION_ALREADY_COMPLETED` | The Session is no longer active.        |
+| `401`  | `STUDENT_REQUIRED`          | No valid Student cookie is present.     |
 
 ### Complete an examination
 
@@ -199,6 +200,7 @@ Expected errors:
 | `403`  | `SESSION_FORBIDDEN`  | The Session belongs to another Student. |
 | `404`  | `SESSION_NOT_FOUND`  | The Session does not exist.             |
 | `409`  | `SESSION_INCOMPLETE` | Guess are missing.                      |
+| `401`  | `STUDENT_REQUIRED`  | No valid Student cookie is present.     |
 
 ### Save an email
 
@@ -216,7 +218,7 @@ Request:
 
 Server behavior:
 
-- Validate the email on the server.
+- Validate the email on the server, with a maximum length of 60 characters.
 - Save the email against the cookie’s Student.
 - Log the event.
 
@@ -226,7 +228,7 @@ Expected errors:
 
 | Status | Code | Condition |
 | --- | --- | --- |
-| `400` | `INVALID_EMAIL` | Email is malformed, is not a string, or exceeds the character limit. |
+| `400` | `INVALID_EMAIL` | Email is malformed, is not a string, or exceeds 60 characters. |
 
 ### Submit general feedback
 
@@ -235,6 +237,7 @@ POST /api/feedback
 ```
 
 Submit general feedback.
+If no valid Student cookie exists, create a Guest and set the Student cookie before returning success.
 
 Request body:
 
@@ -250,6 +253,12 @@ Server behavior:
 
 Success response — `200 OK` (no response body):
 
+Expected errors:
+
+| Status | Code | Condition |
+| --- | --- | --- |
+| `400` | `INVALID_FEEDBACK` | `message` is not a string or has fewer than five non-whitespace characters after trimming. |
+
 ### Submit question feedback
 
 ```http
@@ -257,6 +266,7 @@ POST /api/questions/{questionId}/feedback
 ```
 
 Submit feedback about a particular Question.
+Require a valid Student cookie and a completed Session owned by that Student that contains the Question.
 
 Request body:
 
@@ -277,7 +287,9 @@ Expected errors:
 | Status | Code                        | Condition                               |
 | ------ | --------------------------- | ----------------------------------------|
 | `400`  | `INVALID_QUESTION_ID`       | `questionId` is not a valid integer.    |
-| `404`  | `QUESTION_NOT_FOUND`        | The Question does not exist.            |
+| `404`  | `QUESTION_NOT_FOUND`        | The Question is not in a completed Session owned by the Student. |
+| `400`  | `INVALID_FEEDBACK`         | `message` is not a string or has fewer than five non-whitespace characters after trimming. |
+| `401`  | `STUDENT_REQUIRED`         | No valid Student cookie is present.     |
 
 ## Administration Endpoints
 
