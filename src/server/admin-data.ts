@@ -25,8 +25,16 @@ function toQuestion(row: Question): Question {
 }
 
 export async function getAdminSubjects(): Promise<Subject[]> {
-  const result = await pool.query<Subject>("SELECT id, title FROM subjects ORDER BY title, id");
-  return result.rows.map((row) => ({ id: row.id, title: row.title }));
+  const result = await pool.query<Subject>("SELECT id, title, is_active FROM subjects ORDER BY title, id");
+  return result.rows.map((row) => ({ id: row.id, title: row.title, is_active: row.is_active }));
+}
+
+export async function updateAdminSubjectActive(subjectId: number, isActive: boolean): Promise<boolean> {
+  const result = await pool.query(
+    "UPDATE subjects SET is_active = $2 WHERE id = $1",
+    [subjectId, isActive],
+  );
+  return result.rowCount === 1;
 }
 
 export async function getAdminQuestionTitles(): Promise<QuestionTitle[]> {

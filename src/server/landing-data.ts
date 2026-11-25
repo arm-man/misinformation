@@ -20,10 +20,12 @@ export async function getLandingData(key: string | undefined): Promise<{
     `SELECT subjects.id, subjects.title, sessions.id AS session_id, sessions.completed_at
      FROM subjects
      LEFT JOIN sessions ON sessions.subject_id = subjects.id AND sessions.student_id = $1
-     WHERE EXISTS (
-       SELECT 1 FROM questions
-       WHERE questions.subject_id = subjects.id AND questions.is_active = true
-     ) OR sessions.id IS NOT NULL
+     WHERE subjects.is_active = true AND (
+       EXISTS (
+         SELECT 1 FROM questions
+         WHERE questions.subject_id = subjects.id AND questions.is_active = true
+       ) OR sessions.id IS NOT NULL
+     )
      ORDER BY subjects.title, subjects.id`,
     [student?.id ?? null],
   );

@@ -42,10 +42,13 @@ async function responseError(response: Response): Promise<string> {
   }
 }
 
-export default function AdminEditor({ subjects, initialQuestionTitles }: {
+export default function AdminEditor({ subjects: initialSubjects, initialQuestionTitles }: {
   subjects: Subject[];
   initialQuestionTitles: QuestionTitle[];
 }) {
+  const [subjects, setSubjects] = useState(initialSubjects);
+  const [savingSubjectId, setSavingSubjectId] = useState<number | null>(null);
+  const [subjectStatus, setSubjectStatus] = useState("");
   const [questionTitles, setQuestionTitles] = useState(initialQuestionTitles);
   const [subjectId, setSubjectId] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -152,6 +155,38 @@ export default function AdminEditor({ subjects, initialQuestionTitles }: {
     }
   }
 
+  async function changeSubjectActive(subject: Subject, isActive: boolean) {
+    if (isLocked) return;
+    setPending(true);
+    setSavingSubjectId(subject.id);
+    setSubjectStatus("");
+    setError("");
+    setSubjects((current) => current.map((item) =>
+      item.id === subject.id ? { ...item, is_active: isActive } : item));
+    let saved = false;
+    try {
+      const response = await fetch(`/api/admin/subjects/${subject.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_active: isActive }),
+      });
+      if (!response.ok) {
+        setError(await responseError(response));
+        return;
+      }
+      saved = true;
+      setSubjectStatus(`${subject.title}: ${isActive ? "active" : "inactive"} saved.`);
+    } catch {
+      setError("Could not save the Subject status. Please try again.");
+    } finally {
+      // Restore the last saved checkbox value when the update is not confirmed.
+      if (!saved) setSubjects((current) => current.map((item) =>
+        item.id === subject.id ? subject : item));
+      setSavingSubjectId(null);
+      setPending(false);
+    }
+  }
+
   async function signOut() {
     if (pending) return;
     setPending(true);
@@ -190,7 +225,8 @@ export default function AdminEditor({ subjects, initialQuestionTitles }: {
         </div>
 
         {error && <p className={styles.error} role="alert">{error}</p>}
-        {pending && position === -1 && <p className={styles.muted}>Loading Questions…</p>}
+        {subjectStatus && <p className={styles.muted} role="status">{subjectStatus}</p>}
+        {pending && savingSubjectId === null && position === -1 && <p className={styles.muted}>Loading Questions…</p>}
 
         {!subjectId && (
           <section className={styles.directory} aria-label="Questions by Subject">
@@ -198,7 +234,16 @@ export default function AdminEditor({ subjects, initialQuestionTitles }: {
               const titles = questionTitles.filter((question) => question.subject_id === subject.id);
               return (
                 <section key={subject.id} className={styles.subjectGroup} aria-labelledby={`subject-${subject.id}`}>
-                  <h2 id={`subject-${subject.id}`}>{subject.title}</h2>
+                  <div className={styles.subjectHeading}>
+                    <h2 id={`subject-${subject.id}`}>{subject.title}</h2>
+                    <div className={styles.checkboxRow}>
+                      <input id={`subject-active-${subject.id}`} type="checkbox" checked={subject.is_active}
+                        disabled={isLocked} aria-label={`${subject.title}: is_active`}
+                        onChange={(event) => void changeSubjectActive(subject, event.target.checked)} />
+                      <label htmlFor={`subject-active-${subject.id}`}>is_active</label>
+                      {savingSubjectId === subject.id && <span className={styles.muted} role="status">Saving…</span>}
+                    </div>
+                  </div>
                   {titles.length === 0 ? <p className={styles.muted}>No Questions yet.</p> : (
                     <ul className={styles.questionList}>
                       {titles.map((question) => (

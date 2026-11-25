@@ -54,11 +54,14 @@ Stores the shared Subjects maintained by the Administrator.
 | --- | --- | --- | --- |
 | `id` | `integer` identity | No | Primary key. |
 | `title` | `text` | No | Subject title shown to Students. |
+| `is_active` | `boolean` | No | Whether the Subject may appear on the Landing Page. Use `DEFAULT false`. |
 
 Constraints:
 
 - Primary key on `id`.
 - Check that `title` is not empty after trimming.
+
+The Administration directory updates `subjects.is_active` immediately when its checkbox changes. This flag filters only Landing Page listings; it does not filter direct Session access or alter Question activation or historical Session data.
 
 ### `questions`
 
@@ -215,7 +218,9 @@ The initial schema is located in:
 database/001_migration_initial.sql
 ```
 
-The migration creates tables in dependency order:
+Apply `database/002_migration_add_subject_is_active.sql` after the initial migration and before running the updated application. It adds `subjects.is_active boolean NOT NULL DEFAULT false`; all existing Subjects become inactive. Activate the desired Subjects through Administration before expecting them on the Landing Page.
+
+The initial migration creates tables in dependency order:
 
 1. `students`
 2. `subjects`

@@ -50,6 +50,7 @@ When a timestamp is needed in a response, return it as an ISO 8601 UTC string, f
 
 - `200 OK` for a successful update.
 - `201 Created` when a Student or Session is created.
+- `204 No Content` for a successful Subject activation update, with no response body.
 
 ### Error Shape
 
@@ -301,9 +302,15 @@ These endpoints use the separate Administration cookie described in `Architectur
 
 ### Load Subjects and Questions
 
-The protected Administration page initially loads the Subject list without selecting a Subject or loading a Question form. The list includes Subjects without Questions. After dropdown selection, load the Subject's Questions with a server-side data function, including inactive Questions and ordering them by ascending `id`; display the last Question in that order, or a blank new-Question form if the list is empty. If the selector fetches a different Subject without a full page load, use `GET /api/admin/subjects/{subjectId}/questions` with the same authorization check. Return the Subject's Questions with every `questions` column, or an empty array; return `404` with `SUBJECT_NOT_FOUND` if the Subject does not exist.
+The protected Administration page initially loads the Subject list without selecting a Subject or loading a Question form. The list includes inactive Subjects and Subjects without Questions, with `id`, `title`, and `is_active` for each Subject. After dropdown selection, load the Subject's Questions with a server-side data function, including inactive Questions and ordering them by ascending `id`; display the last Question in that order, or a blank new-Question form if the list is empty. If the selector fetches a different Subject without a full page load, use `GET /api/admin/subjects/{subjectId}/questions` with the same authorization check. Return the Subject's Questions with every `questions` column, or an empty array; return `404` with `SUBJECT_NOT_FOUND` if the Subject does not exist.
 
 The same authorized page load retrieves only `id`, `subject_id`, and `short_title` for the initial directory described in `Product.md`; no additional HTTP endpoint is needed. Selecting a directory title uses the existing GET endpoint above and opens the matching Question instead of the last one.
+
+### Update Subject activation
+
+`PATCH /api/admin/subjects/{subjectId}` accepts only `{ "is_active": true }` or `{ "is_active": false }`. Require Administration authentication, validate a positive integer Subject ID, and reject missing, non-boolean, or unexpected fields. Update only the Subject's `is_active` column. Return `204 No Content` with no body after saving, `400` with `INVALID_SUBJECT` for invalid JSON/content type or fields, or `404` with `SUBJECT_NOT_FOUND` for an invalid or unknown ID. The common `401` and `500` errors apply.
+
+The directory checkbox calls this endpoint immediately on change. The browser keeps the requested value on success and restores the prior value with an error on failure. No Save button is involved. This endpoint affects Landing Page visibility only; direct Session access remains available.
 
 ### Create a Question
 
@@ -313,7 +320,7 @@ The same authorized page load retrieves only `id`, `subject_id`, and `short_titl
 
 `PUT /api/admin/questions/{questionId}` accepts the same editable fields as creation. Ignore no unexpected fields: reject attempts to change `id` or `subject_id` with `400` and `INVALID_QUESTION`. Validate the full Question before updating it. Return `200` with the updated Question, or `404` with `QUESTION_NOT_FOUND` if absent. `is_active` can be changed here. The administrator follows the operational promise in `Product.md` for Questions included in completed Sessions.
 
-The browser calls a create or update endpoint only when the Administrator selects **Save**. **Next**, **Previous**, and Subject selection perform no mutation and are disabled while edits are unsaved. After a successful create or update, display the returned saved Question and allow navigation. For failed validation or storage, keep the draft visible and navigation disabled. **Cancel** discards local edits without an API call. Existing error shape and server-side logging rules apply.
+The browser calls a Question create or update endpoint only when the Administrator selects **Save**. **Next**, **Previous**, and Subject selection perform no mutation and are disabled while edits are unsaved. After a successful create or update, display the returned saved Question and allow navigation. For failed validation or storage, keep the draft visible and navigation disabled. **Cancel** discards local edits without an API call. Existing error shape and server-side logging rules apply.
 
 ## Server-Rendered Page Data
 

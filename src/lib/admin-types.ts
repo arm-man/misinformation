@@ -1,6 +1,7 @@
 export type Subject = {
   id: number;
   title: string;
+  is_active: boolean;
 };
 
 export type Question = {

@@ -99,7 +99,11 @@
 .panel button:disabled { opacity: 0.48; cursor: not-allowed; }
 .directory { display: grid; gap: 10px; margin-top: 16px; }
 .subjectGroup { padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; }
-.subjectGroup h2 { margin: 0 0 6px; }
+.subjectHeading { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 6px; }
+.subjectHeading h2 { margin: 0; overflow-wrap: anywhere; min-width: 0; }
+.subjectHeading .checkboxRow { min-height: 44px; flex-wrap: wrap; }
+.subjectHeading label { cursor: pointer; }
+.subjectHeading input:disabled + label { cursor: not-allowed; }
 .subjectGroup p { margin: 0; }
 .questionList { list-style: none; margin: 0; padding: 0; }
 .questionList li + li { border-top: 1px solid var(--border); }
