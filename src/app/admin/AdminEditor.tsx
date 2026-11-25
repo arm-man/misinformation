@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import type { Question, QuestionInput, Subject } from "@/lib/admin-types";
+import type { Question, QuestionInput, QuestionTitle, Subject } from "@/lib/admin-types";
 import styles from "./admin.module.css";
 
 const EMPTY_QUESTION: QuestionInput = {
@@ -42,7 +42,11 @@ async function responseError(response: Response): Promise<string> {
   }
 }
 
-export default function AdminEditor({ subjects }: { subjects: Subject[] }) {
+export default function AdminEditor({ subjects, initialQuestionTitles }: {
+  subjects: Subject[];
+  initialQuestionTitles: QuestionTitle[];
+}) {
+  const [questionTitles, setQuestionTitles] = useState(initialQuestionTitles);
   const [subjectId, setSubjectId] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [position, setPosition] = useState(-1);
@@ -64,7 +68,7 @@ export default function AdminEditor({ subjects }: { subjects: Subject[] }) {
     setSaveFailed(false);
   }
 
-  async function selectSubject(value: string) {
+  async function selectSubject(value: string, questionId?: number) {
     if (isLocked) return;
     setSubjectId(value);
     setQuestions([]);
@@ -83,9 +87,17 @@ export default function AdminEditor({ subjects }: { subjects: Subject[] }) {
       }
       const loaded: Question[] = await response.json();
       setQuestions(loaded);
-      const lastPosition = loaded.length === 0 ? 0 : loaded.length - 1;
-      setPosition(lastPosition);
-      setDraft(draftFrom(loaded[lastPosition] ?? EMPTY_QUESTION));
+      // The directory opens the chosen Question; the dropdown still opens the last one.
+      const nextPosition = questionId === undefined
+        ? Math.max(0, loaded.length - 1)
+        : loaded.findIndex((question) => question.id === questionId);
+      if (nextPosition === -1) {
+        setSubjectId("");
+        setError("That Question is no longer available. Please reload the page.");
+        return;
+      }
+      setPosition(nextPosition);
+      setDraft(draftFrom(loaded[nextPosition] ?? EMPTY_QUESTION));
     } catch {
       setSubjectId("");
       setError("Could not load Questions. Please try again.");
@@ -119,6 +131,11 @@ export default function AdminEditor({ subjects }: { subjects: Subject[] }) {
         return;
       }
       const saved: Question = await response.json();
+      // Keep the directory current when returning to the unselected Subject view.
+      setQuestionTitles((current) => [
+        ...current.filter((question) => question.id !== saved.id),
+        { id: saved.id, subject_id: saved.subject_id, short_title: saved.short_title },
+      ].sort((first, second) => first.id - second.id));
       if (isNew) {
         setQuestions((current) => [...current, saved]);
         setPosition(questions.length);
@@ -159,7 +176,6 @@ export default function AdminEditor({ subjects }: { subjects: Subject[] }) {
           <div>
             <p className={styles.eyebrow}>Misinformation Examination</p>
             <h1>Administration</h1>
-            <p className={styles.muted}>Add and edit Questions by Subject.</p>
           </div>
           <button type="button" className={styles.secondary} onClick={signOut} disabled={pending}>Sign out</button>
         </header>
@@ -175,6 +191,31 @@ export default function AdminEditor({ subjects }: { subjects: Subject[] }) {
 
         {error && <p className={styles.error} role="alert">{error}</p>}
         {pending && position === -1 && <p className={styles.muted}>Loading Questions…</p>}
+
+        {!subjectId && (
+          <section className={styles.directory} aria-label="Questions by Subject">
+            {subjects.map((subject) => {
+              const titles = questionTitles.filter((question) => question.subject_id === subject.id);
+              return (
+                <section key={subject.id} className={styles.subjectGroup} aria-labelledby={`subject-${subject.id}`}>
+                  <h2 id={`subject-${subject.id}`}>{subject.title}</h2>
+                  {titles.length === 0 ? <p className={styles.muted}>No Questions yet.</p> : (
+                    <ul className={styles.questionList}>
+                      {titles.map((question) => (
+                        <li key={question.id}>
+                          <button type="button" className={styles.questionTitle} disabled={isLocked}
+                            onClick={() => void selectSubject(String(subject.id), question.id)}>
+                            {question.short_title}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              );
+            })}
+          </section>
+        )}
 
         {subjectId && position >= 0 && (
           <form onSubmit={save}>

@@ -20,3 +20,5 @@ export type Question = {
 };
 
 export type QuestionInput = Omit<Question, "id" | "subject_id">;
+
+export type QuestionTitle = Pick<Question, "id" | "subject_id" | "short_title">;

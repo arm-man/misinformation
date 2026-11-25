@@ -97,9 +97,30 @@
 .panel button.secondary { color: var(--primary-blue); background: transparent; }
 .panel button.secondary:hover:not(:disabled) { background: var(--selection); }
 .panel button:disabled { opacity: 0.48; cursor: not-allowed; }
+.directory { display: grid; gap: 10px; margin-top: 16px; }
+.subjectGroup { padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; }
+.subjectGroup h2 { margin: 0 0 6px; }
+.subjectGroup p { margin: 0; }
+.questionList { list-style: none; margin: 0; padding: 0; }
+.questionList li + li { border-top: 1px solid var(--border); }
+.panel button.questionTitle {
+  width: 100%;
+  min-height: 32px;
+  padding: 4px 12px;
+  line-height: 1.35;
+  border-color: transparent;
+  color: var(--primary-blue);
+  background: transparent;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+.panel button.questionTitle:hover:not(:disabled) { background: var(--selection); }
 .actions { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
 
 @media (max-width: 640px) {
+  .panel button.questionTitle { min-height: 44px; }
   .header { align-items: flex-start; }
   .grid { grid-template-columns: 1fr; }
   .wide { grid-column: auto; }

@@ -301,7 +301,9 @@ These endpoints use the separate Administration cookie described in `Architectur
 
 ### Load Subjects and Questions
 
-The protected Administration page initially loads the Subject list without selecting a Subject or loading a Question form. The list includes Subjects without Questions. After selection, load the Subject's Questions with a server-side data function, including inactive Questions and ordering them by ascending `id`; display the last Question in that order, or a blank new-Question form if the list is empty. If the selector fetches a different Subject without a full page load, use `GET /api/admin/subjects/{subjectId}/questions` with the same authorization check. Return the Subject's Questions with every `questions` column, or an empty array; return `404` with `SUBJECT_NOT_FOUND` if the Subject does not exist.
+The protected Administration page initially loads the Subject list without selecting a Subject or loading a Question form. The list includes Subjects without Questions. After dropdown selection, load the Subject's Questions with a server-side data function, including inactive Questions and ordering them by ascending `id`; display the last Question in that order, or a blank new-Question form if the list is empty. If the selector fetches a different Subject without a full page load, use `GET /api/admin/subjects/{subjectId}/questions` with the same authorization check. Return the Subject's Questions with every `questions` column, or an empty array; return `404` with `SUBJECT_NOT_FOUND` if the Subject does not exist.
+
+The same authorized page load retrieves only `id`, `subject_id`, and `short_title` for the initial directory described in `Product.md`; no additional HTTP endpoint is needed. Selecting a directory title uses the existing GET endpoint above and opens the matching Question instead of the last one.
 
 ### Create a Question
 

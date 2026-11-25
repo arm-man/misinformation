@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Question, QuestionInput, Subject } from "@/lib/admin-types";
+import type { Question, QuestionInput, QuestionTitle, Subject } from "@/lib/admin-types";
 import { pool } from "./db";
 
 const QUESTION_COLUMNS = `id, subject_id, short_title, question_text, choice1, choice2,
@@ -27,6 +27,15 @@ function toQuestion(row: Question): Question {
 export async function getAdminSubjects(): Promise<Subject[]> {
   const result = await pool.query<Subject>("SELECT id, title FROM subjects ORDER BY title, id");
   return result.rows.map((row) => ({ id: row.id, title: row.title }));
+}
+
+export async function getAdminQuestionTitles(): Promise<QuestionTitle[]> {
+  const result = await pool.query<QuestionTitle>(
+    "SELECT id, subject_id, short_title FROM questions ORDER BY id ASC",
+  );
+  return result.rows.map((row) => ({
+    id: row.id, subject_id: row.subject_id, short_title: row.short_title,
+  }));
 }
 
 export async function subjectExists(subjectId: number): Promise<boolean> {

@@ -1,7 +1,7 @@
 import { hasAdminAccess } from "@/server/admin-auth";
-import { getAdminSubjects } from "@/server/admin-data";
+import { getAdminQuestionTitles, getAdminSubjects } from "@/server/admin-data";
 import { unexpectedAdminError } from "@/server/admin-http";
-import type { Subject } from "@/lib/admin-types";
+import type { QuestionTitle, Subject } from "@/lib/admin-types";
 import AdminEditor from "./AdminEditor";
 import AdminLogin from "./AdminLogin";
 import styles from "./admin.module.css";
@@ -14,9 +14,10 @@ export default async function AdminPage() {
   if (!hasAccess) return <AdminLogin />;
 
   let subjects: Subject[] = [];
+  let questionTitles: QuestionTitle[] = [];
   let failed = false;
   try {
-    subjects = await getAdminSubjects();
+    [subjects, questionTitles] = await Promise.all([getAdminSubjects(), getAdminQuestionTitles()]);
   } catch (error) {
     await unexpectedAdminError("Loading the Administration page failed", error);
     failed = true;
@@ -29,5 +30,5 @@ export default async function AdminPage() {
       </div>
     </main>
   );
-  return <AdminEditor subjects={subjects} />;
+  return <AdminEditor subjects={subjects} initialQuestionTitles={questionTitles} />;
 }
