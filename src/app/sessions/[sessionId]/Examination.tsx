@@ -61,14 +61,14 @@ export default function Examination({ sessionId, title, initialQuestions }: {
 
   if (!question) return <p className={publicStyles.error}>This examination has no questions.</p>;
   return <>
-    <span className={publicStyles.eyebrow}>Session examination</span>
-    <h1 className={publicStyles.title}>{title}</h1>
-    <p className={styles.progress}>{answered} of {questions.length} answered · {skipped} skipped</p>
-    <div className={styles.progressTrack} role="progressbar" aria-label="Examination progress" aria-valuenow={recorded} aria-valuemin={0} aria-valuemax={questions.length}>
-      <div style={{ width: `${recorded / questions.length * 100}%` }} />
-    </div>
+    <section className={styles.summaryCard} aria-labelledby="subject-heading">
+      <h1 id="subject-heading" className={`${publicStyles.title} ${styles.examinationTitle}`}>{title}</h1>
+      <p className={styles.progress}>{answered} of {questions.length} answered · {skipped} skipped</p>
+      <div className={styles.progressTrack} role="progressbar" aria-label="Examination progress" aria-valuenow={recorded} aria-valuemin={0} aria-valuemax={questions.length}>
+        <div style={{ width: `${recorded / questions.length * 100}%` }} />
+      </div>
+    </section>
     <section className={styles.questionCard} aria-labelledby="question-heading">
-      <span className={publicStyles.eyebrow}>Question {index + 1} of {questions.length}</span>
       <h2 id="question-heading" className={styles.questionText}>{question.text}</h2>
       <fieldset className={styles.choices} disabled={pending}>
         <legend className={styles.srOnly}>Choose one answer</legend>

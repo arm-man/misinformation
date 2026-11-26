@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import type { LandingSubject } from "@/lib/landing-types";
 import styles from "./page.module.css";
 
+const statusOrder: Record<LandingSubject["status"], number> = {
+  "in-progress": 0,
+  "not-started": 1,
+  complete: 2,
+};
+
 export default function SubjectList({ subjects }: { subjects: LandingSubject[] }) {
   const router = useRouter();
   const [pendingId, setPendingId] = useState<number | null>(null);
@@ -34,11 +40,17 @@ export default function SubjectList({ subjects }: { subjects: LandingSubject[] }
 
   if (subjects.length === 0) return <p className={styles.emptySubjects}>No examinations are available yet. Please check back soon.</p>;
 
+  const sortedSubjects = [...subjects].sort((a, b) =>
+    statusOrder[a.status] - statusOrder[b.status] ||
+    a.title.localeCompare(b.title, "en", { sensitivity: "base" }) ||
+    a.id - b.id,
+  );
+
   return <>
     <div className={styles.subjectGrid}>
-      {subjects.map((subject) => {
+      {sortedSubjects.map((subject) => {
         const label = subject.status === "not-started" ? null : subject.status === "in-progress" ? "In progress" : "Completed";
-        const action = pendingId === subject.id ? "Opening…" : subject.status === "complete" ? "View examination" : null;
+        const action = pendingId === subject.id ? "Opening…" : null;
         const statusClass = subject.status === "in-progress" ? styles.statusProgress : subject.status === "complete" ? styles.statusComplete : "";
         return <button key={subject.id} type="button" className={styles.subjectCard} disabled={pendingId !== null} onClick={() => openSubject(subject.id)}>
           {label && <span className={`${styles.subjectStatus} ${statusClass}`}>{label}</span>}

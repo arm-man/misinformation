@@ -8,6 +8,7 @@ import { loadExaminationQuestions, loadResultQuestions, loadSession } from "@/se
 import { withPublicPageLogging } from "@/server/public-log";
 import { findStudent, STUDENT_COOKIE_NAME } from "@/server/students";
 import Examination from "./Examination";
+import sessionStyles from "./session.module.css";
 
 export const runtime = "nodejs";
 
@@ -25,7 +26,7 @@ export default async function SessionPage({ params, searchParams }: {
 
   if (session.completed_at === null) {
     const questions = await withPublicPageLogging("Loading examination Questions failed", () => loadExaminationQuestions(session.id));
-    return <><PublicHeader /><main className={styles.main}>
+    return <><PublicHeader /><main className={`${styles.main} ${sessionStyles.examinationMain}`}>
       <Examination sessionId={session.id} title={session.title} initialQuestions={questions} />
     </main></>;
   }
