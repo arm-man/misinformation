@@ -43,7 +43,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
           <div className={styles.heroCopy}>
             <span className={styles.eyebrow}>A closer look at what we believe</span>
             <h1 id="hero-title">Can <em>you</em> identify fake news?</h1>
-            <p>Misinformation shows up everywhere, from social media to mainstream news. Many people fall for these false claims and believe them without checking the facts. But you&apos;re different. Or are you?</p>
+            <p>In an age of social media and politicized news, misinformation is rampant. Repeated by influencers, journalists, and political leaders, falsehoods can become widely accepted as facts. Yet many of the people who have been misled are convinced they know the truth. Surely you&apos;re not one of them. Or are you?</p>
           </div>
           <div className={styles.heroArt} aria-hidden="true">
             <div className={styles.artCircleOuter}><div className={styles.artCircleMiddle}><div className={styles.artCircleInner}>?</div></div></div>
@@ -57,7 +57,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
               <span className={styles.eyebrow}>Begin your examination</span>
               <h2 id="examinations-title">Choose a subject</h2>
             </div>
-            <p>Pick a topic and answer a series of questions. You can leave and come back to an examination in progress.</p>
+            <p>Test your knowledge of common misconceptions. Your progress is saved automatically.</p>
           </div>
           {loadFailed ? <p className={styles.loadError} role="alert">Examinations are temporarily unavailable. Please try again shortly.</p> : <SubjectList subjects={subjects} />}
         </section>

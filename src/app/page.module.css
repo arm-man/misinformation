@@ -21,19 +21,21 @@
 .sectionHeading h2, .about h2 { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; letter-spacing: -.045em; }
 .sectionHeading h2 { font-size: clamp(2.3rem, 3.6vw, 3.5rem); margin: 12px 0 0; }
 .sectionHeading p { max-width: 385px; margin: 0 0 5px; color: var(--muted-text); line-height: 1.6; }
-.subjectGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-.subjectCard { min-height: 228px; width: 100%; padding: 27px; display: flex; flex-direction: column; align-items: flex-start; text-align: left; background: var(--background); border: 1px solid var(--border); border-radius: 6px; color: var(--foreground); cursor: pointer; transition: border-color .15s, transform .15s, box-shadow .15s; }
-.subjectCard:hover { border-color: var(--primary-blue); transform: translateY(-2px); box-shadow: 0 9px 26px #315a7814; }
+.subjectGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.subjectCard { min-height: 124px; width: 100%; padding: 14px 18px; display: flex; flex-direction: column; align-items: flex-start; text-align: left; background: var(--background); border: 1px solid var(--border); border-radius: 6px; color: var(--foreground); cursor: pointer; transition: border-color .15s, transform .15s, box-shadow .15s; }
+@media (hover: hover) and (pointer: fine) {
+  .subjectCard:hover:not(:disabled) { border-color: var(--primary-blue); transform: translateY(-2px); box-shadow: 0 9px 26px #315a7814; }
+}
+.subjectCard:active:not(:disabled) { border-color: var(--primary-blue); background: var(--soft-accent); transform: scale(.98); box-shadow: none; }
 .subjectCard:disabled { cursor: wait; opacity: .7; }
-.subjectCard:disabled:hover { transform: none; box-shadow: none; }
 .subjectStatus { display: inline-flex; align-items: center; gap: 8px; color: var(--accent-brown); font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
 .subjectStatus::before { content: ''; width: 9px; height: 9px; border: 1.5px solid currentColor; border-radius: 50%; }
 .statusProgress { color: var(--primary-blue); }
 .statusProgress::before { background: var(--primary-blue); }
 .statusComplete { color: #4c705c; }
 .statusComplete::before { background: #4c705c; }
-.subjectTitle { margin: 25px 0 auto; font-family: Georgia, serif; font-size: 1.55rem; line-height: 1.2; }
-.subjectAction { margin-top: 25px; color: var(--primary-blue); font-size: .9rem; font-weight: 700; }
+.subjectTitle { margin: 8px 0 0; font-family: Georgia, serif; font-size: 1.55rem; line-height: 1.2; }
+.subjectAction { margin-top: 6px; color: var(--primary-blue); font-size: .9rem; font-weight: 700; }
 .emptySubjects { padding: 30px; background: var(--background); color: var(--muted-text); border: 1px solid var(--border); }
 .loadError { padding: 25px 30px; background: var(--background); color: var(--error); border: 1px solid var(--border); border-radius: 4px; }
 .actionError { margin: 16px 0 0; color: var(--error); }
@@ -61,7 +63,7 @@
 .about p { max-width: 680px; font-size: 1.06rem; line-height: 1.85; color: var(--muted-text); margin: 0 0 20px; }
 .footer { border-top: 1px solid var(--border); max-width: 1160px; margin: auto; padding: 28px 0 35px; display: flex; justify-content: space-between; gap: 20px; color: var(--muted-text); font-size: .88rem; }
 @media (max-width: 800px) { .savedNotice { margin: 16px 30px 0; } .hero { grid-template-columns: 1fr; padding-top: 55px; gap: 55px; } .heroArt { min-height: 330px; } .subjectGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .emailSection { margin: 70px 30px; grid-template-columns: 1fr; } .emailCompact { margin: 25px 0; } .about { padding: 30px 30px 80px; gap: 30px; } .footer { margin: 0 30px; } }
-@media (max-width: 560px) { .savedNotice { margin: 12px 20px 0; } .header { padding: 20px; min-height: 76px; } .hero { padding: 45px 20px 70px; } .hero h1 { font-size: clamp(2.9rem, 12vw, 4rem); } .heroArt { min-height: 290px; } .artCircleOuter { width: 245px; } .artCaption { bottom: 22px; } .examinations { padding: 68px 20px 75px; } .sectionHeading { display: block; } .sectionHeading p { margin-top: 18px; } .subjectGrid { grid-template-columns: 1fr; } .subjectCard { min-height: 195px; } .emailSection { margin: 65px 20px; padding: 31px 24px; gap: 25px; } .emailCompact { margin: 25px 0; padding: 24px; } .emailForm { flex-direction: column; } .about { display: block; padding: 25px 20px 70px; } .aboutLabel { margin-bottom: 35px; } .footer { margin: 0 20px; display: block; } .footer span { display: block; margin-bottom: 8px; } }
+@media (max-width: 560px) { .savedNotice { margin: 12px 20px 0; } .header { padding: 20px; min-height: 76px; } .hero { padding: 45px 20px 70px; } .hero h1 { font-size: clamp(2.9rem, 12vw, 4rem); } .heroArt { min-height: 290px; } .artCircleOuter { width: 245px; } .artCaption { bottom: 22px; } .examinations { padding: 68px 20px 75px; } .sectionHeading { display: block; } .sectionHeading p { margin-top: 18px; } .subjectGrid { grid-template-columns: 1fr; } .subjectCard { min-height: 108px; } .emailSection { margin: 65px 20px; padding: 31px 24px; gap: 25px; } .emailCompact { margin: 25px 0; padding: 24px; } .emailForm { flex-direction: column; } .about { display: block; padding: 25px 20px 70px; } .aboutLabel { margin-bottom: 35px; } .footer { margin: 0 20px; display: block; } .footer span { display: block; margin-bottom: 8px; } }
 
 @media (min-width: 801px) {
   .header { min-height: 72px; padding-top: 12px; padding-bottom: 12px; }
@@ -70,9 +72,7 @@
   .heroArt { min-height: 320px; }
   .examinations { padding-top: 56px; padding-bottom: 62px; }
   .sectionHeading { margin-bottom: 26px; }
-  .subjectCard { min-height: 190px; padding: 22px; }
-  .subjectTitle { margin-top: 18px; }
-  .subjectAction { margin-top: 18px; }
+  .subjectCard { min-height: 108px; }
   .emailSection { margin-top: 58px; margin-bottom: 58px; padding-top: 30px; padding-bottom: 30px; }
   .emailCompact { margin-top: 24px; margin-bottom: 24px; padding: 24px; }
   .about { padding-top: 14px; padding-bottom: 65px; }
