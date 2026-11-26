@@ -38,11 +38,12 @@ export default function SubjectList({ subjects }: { subjects: LandingSubject[] }
     <div className={styles.subjectGrid}>
       {subjects.map((subject) => {
         const label = subject.status === "not-started" ? null : subject.status === "in-progress" ? "In progress" : "Completed";
-        const action = pendingId === subject.id ? "Opening…" : subject.status === "not-started" ? null : subject.status === "in-progress" ? "Continue examination" : "View examination";
+        const action = pendingId === subject.id ? "Opening…" : subject.status === "complete" ? "View examination" : null;
         const statusClass = subject.status === "in-progress" ? styles.statusProgress : subject.status === "complete" ? styles.statusComplete : "";
         return <button key={subject.id} type="button" className={styles.subjectCard} disabled={pendingId !== null} onClick={() => openSubject(subject.id)}>
           {label && <span className={`${styles.subjectStatus} ${statusClass}`}>{label}</span>}
           <span className={styles.subjectTitle}>{subject.title}</span>
+          {subject.description && <span className={styles.subjectDescription}>{subject.description}</span>}
           {action && <span className={styles.subjectAction}>{action}</span>}
         </button>;
       })}

@@ -7,6 +7,7 @@ import { findStudent } from "./students";
 type SubjectRow = {
   id: number;
   title: string;
+  description: string | null;
   completed_at: Date | null;
   session_id: number | null;
 };
@@ -17,7 +18,7 @@ export async function getLandingData(key: string | undefined): Promise<{
 }> {
   const student = await findStudent(key);
   const result = await pool.query<SubjectRow>(
-    `SELECT subjects.id, subjects.title, sessions.id AS session_id, sessions.completed_at
+    `SELECT subjects.id, subjects.title, subjects.description, sessions.id AS session_id, sessions.completed_at
      FROM subjects
      LEFT JOIN sessions ON sessions.subject_id = subjects.id AND sessions.student_id = $1
      WHERE subjects.is_active = true AND (
@@ -32,6 +33,7 @@ export async function getLandingData(key: string | undefined): Promise<{
   const subjects = result.rows.map((row): LandingSubject => ({
     id: row.id,
     title: row.title,
+    description: row.description,
     status: row.session_id === null ? "not-started" :
       row.completed_at === null ? "in-progress" : "complete",
   }));

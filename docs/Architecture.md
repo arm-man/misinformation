@@ -203,7 +203,7 @@ This Student cookie is unrelated to Administration access and must never authori
 
 ### Landing Page
 
-- Load the available Subjects and the current Student's Session status for each Subject.
+- Load the available Subjects, including their titles and nullable descriptions, and the current Student's Session status for each Subject through the existing server-side data function.
 - Without a valid Student cookie, show all Subjects as not started.
 
 ### Administration Access

@@ -59,6 +59,7 @@ These values should be defined in globals.css.
 - A brief explanation of the website's purpose and the examination.
 - A highlighted section to start a Session:
   - Show the different Subjects - a visual identifier will differentiate between completed Subjects, Subjects already in progress, and Subject that have not been started.
+    - Display each Subject's short description below its title on the Subject card. Omit the description line when no description is stored.
     - Only Subjects with `is_active = true` are listed, including for Students with in-progress or completed Sessions. Within active Subjects, show those with active Questions or an existing Session for the Student.
     - Deactivating a Subject only hides it from the Landing Page. Direct URLs and existing Session access remain available; no learning history is changed.
   - When a Subject is clicked:
