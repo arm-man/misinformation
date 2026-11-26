@@ -101,6 +101,7 @@
 .subjectGroup { padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; }
 .subjectHeading { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 6px; }
 .subjectHeading h2 { margin: 0; overflow-wrap: anywhere; min-width: 0; }
+.questionCount { color: var(--muted-text); font-size: 0.85em; font-weight: 400; }
 .subjectHeading .checkboxRow { min-height: 44px; flex-wrap: wrap; }
 .subjectHeading label { cursor: pointer; }
 .subjectHeading input:disabled + label { cursor: not-allowed; }

@@ -63,6 +63,11 @@ export default function AdminEditor({ subjects: initialSubjects, initialQuestion
   const baseline = draftFrom(currentQuestion ?? EMPTY_QUESTION);
   const isDirty = hasChanges(draft, baseline);
   const isLocked = pending || isDirty || saveFailed;
+  const subjectGroups = subjects.map((subject) => ({
+    subject,
+    titles: questionTitles.filter((question) => question.subject_id === subject.id),
+  })).sort((first, second) => second.titles.length - first.titles.length
+    || first.subject.title.localeCompare(second.subject.title));
 
   function showPosition(nextPosition: number) {
     setPosition(nextPosition);
@@ -230,12 +235,14 @@ export default function AdminEditor({ subjects: initialSubjects, initialQuestion
 
         {!subjectId && (
           <section className={styles.directory} aria-label="Questions by Subject">
-            {subjects.map((subject) => {
-              const titles = questionTitles.filter((question) => question.subject_id === subject.id);
+            {subjectGroups.map(({ subject, titles }) => {
               return (
                 <section key={subject.id} className={styles.subjectGroup} aria-labelledby={`subject-${subject.id}`}>
                   <div className={styles.subjectHeading}>
-                    <h2 id={`subject-${subject.id}`}>{subject.title}</h2>
+                    <h2 id={`subject-${subject.id}`}>
+                      {subject.title}
+                      <span className={styles.questionCount}> — {titles.length} {titles.length === 1 ? "question" : "questions"}</span>
+                    </h2>
                     <div className={styles.checkboxRow}>
                       <input id={`subject-active-${subject.id}`} type="checkbox" checked={subject.is_active}
                         disabled={isLocked} aria-label={`${subject.title}: is_active`}
